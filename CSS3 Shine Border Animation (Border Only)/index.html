@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS3 Border Shine Animation</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #0f172a;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        align-items: center;
+      }
+
+      .shine-border {
+        position: relative;
+        width: 300px;
+        height: 200px;
+        border-radius: 12px;
+        background: #1e293b;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #f8fafc;
+        font-weight: 600;
+      }
+
+      .shine-border::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        border-radius: 14px;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          transparent 40%,
+          #a07cfe,
+          #fe8fb5,
+          #ffbe7b,
+          transparent 60%,
+          transparent
+        );
+        background-size: 400% 400%;
+        background-position: -150% 0;
+        z-index: -1;
+        animation: border-shine 8s linear infinite;
+      }
+
+      .circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+      }
+
+      .circle::before {
+        border-radius: 50%;
+      }
+
+      .button {
+        width: 200px;
+        height: 50px;
+        background: #3b82f6;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      @keyframes border-shine {
+        /* 0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 400% 400%;
+        } */
+        0% {
+          background-position: -150% 0;
+        }
+        50% {
+          background-position: 150% 0;
+        }
+        100% {
+          background-position: -150% 0;
+        }
+      }
+
+      .title {
+        color: #f8fafc;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .code {
+        margin-top: 30px;
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 8px;
+        color: #e2e8f0;
+        max-width: 500px;
+      }
+
+      .code h3 {
+        margin-bottom: 10px;
+        color: #f8fafc;
+      }
+
+      pre {
+        background: #0f172a;
+        padding: 15px;
+        border-radius: 6px;
+        overflow-x: auto;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">CSS3 Border Shine Animation</h1>
+
+      <div class="shine-border">Rectangle with Border Shine</div>
+
+      <div class="shine-border circle">Circle with Border Shine</div>
+
+      <div class="shine-border button">Button with Border Shine</div>
+
+      <div class="code">
+        <h3>CSS Code</h3>
+        <pre><code>.shine-border::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 14px;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        transparent 40%,
+        #A07CFE,
+        #FE8FB5,
+        #FFBE7B,
+        transparent 60%,
+        transparent
+    );
+    background-size: 400% 400%;
+    z-index: -1;
+    animation: border-shine 3s linear infinite;
+}
+
+@keyframes border-shine {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: 400% 400%;
+    }
+}</code></pre>
+      </div>
+    </div>
+  </body>
+</html>

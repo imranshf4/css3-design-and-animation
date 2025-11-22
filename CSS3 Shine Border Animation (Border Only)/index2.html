@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS3 Shine Border</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .shine-border {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            border-radius: 12px;
+            padding: 2px;
+            background: linear-gradient(115deg, 
+                transparent 20%, 
+                #A07CFE 30%, 
+                #FE8FB5 50%, 
+                #FFBE7B 70%, 
+                transparent 80%
+            );
+            background-size: 200% 100%;
+            background-position: -150% 0;
+            animation: shine 3s infinite;
+        }
+
+        .content {
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: -150% 0;
+            }
+            50% {
+                background-position: 150% 0;
+            }
+            100% {
+                background-position: -150% 0;
+            }
+        }
+
+        .code-container {
+            margin-top: 40px;
+            max-width: 600px;
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+
+        .code-container h3 {
+            margin-bottom: 15px;
+            color: #f8fafc;
+        }
+
+        pre {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #94a3b8;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="shine-border">
+            <div class="content">
+                Shine Border Effect
+            </div>
+        </div>
+        
+        <div class="code-container">
+            <h3>CSS Code for Shine Border</h3>
+            <pre><code>.shine-border {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(115deg, 
+        transparent 20%, 
+        #A07CFE 30%, 
+        #FE8FB5 50%, 
+        #FFBE7B 70%, 
+        transparent 80%
+    );
+    background-size: 200% 100%;
+    background-position: -150% 0;
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% {
+        background-position: -150% 0;
+    }
+    50% {
+        background-position: 150% 0;
+    }
+    100% {
+        background-position: -150% 0;
+    }
+}</code></pre>
+        </div>
+        
+        <div class="note">
+            This implementation uses pure CSS3 with linear-gradient and animation properties
+        </div>
+    </div>
+</body>
+</html>
