@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typewriter Placeholder Text</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .input-container {
+            position: relative;
+            margin: 30px 0;
+        }
+        
+        .typewriter-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #f8f8f8;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            transition: border-color 0.3s;
+        }
+        
+        .typewriter-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 20px;
+            background-color: #333;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .instructions {
+            background-color: #f0f7ff;
+            border-left: 4px solid #4a90e2;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #4a90e2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Typewriter Placeholder Effect</h1>
+        
+        <div class="input-container">
+            <input type="text" class="typewriter-input" id="typewriterInput">
+        </div>
+        
+        <div class="instructions">
+            <h3>How it works</h3>
+            <p>The placeholder text will appear with a typewriter effect when the page loads. Start typing to clear the animation.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('typewriterInput');
+            const placeholderText = "Type your message here...";
+            let i = 0;
+            let isDeleting = false;
+            let typingSpeed = 100;
+            let deleteSpeed = 50;
+            let pauseTime = 2000;
+            
+            function typeWriter() {
+                if (!isDeleting && i < placeholderText.length) {
+                    // Typing phase
+                    input.placeholder = placeholderText.substring(0, i + 1);
+                    i++;
+                    setTimeout(typeWriter, typingSpeed);
+                } else if (isDeleting && i > 0) {
+                    // Deleting phase
+                    input.placeholder = placeholderText.substring(0, i - 1);
+                    i--;
+                    setTimeout(typeWriter, deleteSpeed);
+                } else if (i === placeholderText.length && !isDeleting) {
+                    // Pause at the end of typing
+                    isDeleting = true;
+                    setTimeout(typeWriter, pauseTime);
+                } else if (i === 0 && isDeleting) {
+                    // Restart the cycle
+                    isDeleting = false;
+                    setTimeout(typeWriter, typingSpeed);
+                }
+            }
+            
+            // Start the typewriter effect
+            typeWriter();
+            
+            // Clear placeholder when user focuses on the input
+            input.addEventListener('focus', function() {
+                input.placeholder = "";
+            });
+            
+            // Restart the effect when user leaves the input empty
+            input.addEventListener('blur', function() {
+                if (input.value === "") {
+                    i = 0;
+                    isDeleting = false;
+                    typeWriter();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
