@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enhanced Social Media Card Hover</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d0d0d, #1a1a2e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .container h1 {
+            color: #4cff6c;
+            margin-bottom: 40px;
+            font-size: 42px;
+            text-shadow: 0 0 10px rgba(76, 255, 108, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .container h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #4cff6c, transparent);
+        }
+
+        #cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .card {
+            width: 280px;
+            height: 320px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            
+            /* Glow from JS */
+            --x: 50%;
+            --y: 50%;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: var(--y);
+            left: var(--x);
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 70%);
+            transition: width 0.3s ease, height 0.3s ease;
+            z-index: 0;
+        }
+
+        .card:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.03);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card_content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .instagram-card i {
+            color: #E1306C;
+            text-shadow: 0 0 15px rgba(225, 48, 108, 0.5);
+        }
+
+        .github-card i {
+            color: #f0f6fc;
+            text-shadow: 0 0 15px rgba(240, 246, 252, 0.5);
+        }
+
+        .linkedin-card i {
+            color: #0077B5;
+            text-shadow: 0 0 15px rgba(0, 119, 181, 0.5);
+        }
+
+        .card:hover i {
+            transform: scale(1.2);
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        p {
+            color: #ccc;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        p span {
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        a {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            color: #000;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        a:hover {
+            background: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .instagram-card a:hover {
+            background: #E1306C;
+            color: white;
+        }
+
+        .github-card a:hover {
+            background: #333;
+            color: white;
+        }
+
+        .linkedin-card a:hover {
+            background: #0077B5;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #cards {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .card {
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            .container h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Social Media Card Hover</h1>
+
+        <div id="cards">
+            <!-- Instagram -->
+            <div class="card instagram-card">
+                <div class="card_content">
+                    <i class="fa-brands fa-instagram"></i>
+                    <div>
+                        <h2>Instagram</h2>
+                        <p>Followers: <span>625K</span></p>
+                    </div>
+                    <a href="#">
+                        <i class="fa-solid fa-link"></i>
+                        <span>Follow me</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Github -->
+            <div class="card github-card">
+                <div class="card_content">
+                    <i class="fa-brands fa-github"></i>
+                    <div>
+                        <h2>Github</h2>
+                        <p>Followers: <span>150K</span></p>
+                    </div>
+                    <a href="#">
+                        <i class="fa-solid fa-link"></i>
+                        <span>Follow me</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- LinkedIn -->
+            <div class="card linkedin-card">
+                <div class="card_content">
+                    <i class="fa-brands fa-linkedin"></i>
+                    <div>
+                        <h2>LinkedIn</h2>
+                        <p>Connections: <span>150K</span></p>
+                    </div>
+                    <a href="#">
+                        <i class="fa-solid fa-link"></i>
+                        <span>Connect</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Hover over the cards to see the magic!</p>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll(".card").forEach(card => {
+            card.addEventListener("mousemove", (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty("--x", x + "px");
+                card.style.setProperty("--y", y + "px");
+            });
+            
+            // Reset glow position when mouse leaves
+            card.addEventListener("mouseleave", () => {
+                card.style.setProperty("--x", "50%");
+                card.style.setProperty("--y", "50%");
+            });
+        });
+    </script>
+</body>
+</html>
