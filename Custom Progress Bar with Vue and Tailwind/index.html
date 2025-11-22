@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Progress Bar - Vue & Tailwind</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        
+        /* Custom styles for circular progress */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div id="app" class="w-full max-w-md">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Custom Progress Bar</h1>
+            
+            <!-- Circular Progress Bar -->
+            <div class="flex justify-center mb-8">
+                <div class="relative">
+                    <svg class="w-48 h-48" viewBox="0 0 100 100">
+                        <!-- Background circle -->
+                        <circle 
+                            cx="50" 
+                            cy="50" 
+                            r="45" 
+                            stroke="#e5e7eb" 
+                            stroke-width="8" 
+                            fill="transparent" 
+                        />
+                        <!-- Progress circle -->
+                        <circle 
+                            class="progress-ring__circle"
+                            cx="50" 
+                            cy="50" 
+                            r="45" 
+                            :stroke="selectedColor"
+                            stroke-width="8" 
+                            fill="transparent" 
+                            :stroke-dasharray="circumference"
+                            :stroke-dashoffset="strokeDashOffset"
+                        />
+                    </svg>
+                    <!-- Percentage text -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-3xl font-bold" :style="{ color: selectedColor }">
+                            {{ progressPercentage }}%
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Slider -->
+            <div class="mb-8">
+                <label class="block text-gray-700 mb-2 font-medium">Progress Percentage</label>
+                <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    v-model="progressPercentage"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                >
+                <div class="flex justify-between text-gray-600 mt-1 text-sm">
+                    <span>0%</span>
+                    <span>{{ progressPercentage }}%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+            
+            <!-- Color Options -->
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2 font-medium">Progress Color</label>
+                <div class="flex space-x-4">
+                    <div 
+                        v-for="color in colorOptions" 
+                        :key="color.name"
+                        class="w-10 h-10 rounded-full cursor-pointer border-2 transition-all duration-200 flex items-center justify-center"
+                        :class="[selectedColor === color.value ? 'border-gray-800 scale-110' : 'border-gray-300']"
+                        :style="{ backgroundColor: color.value }"
+                        @click="selectedColor = color.value"
+                    >
+                        <i v-if="selectedColor === color.value" class="fas fa-check text-white text-sm"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reset Button -->
+            <div class="text-center">
+                <button 
+                    @click="resetProgress"
+                    class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium"
+                >
+                    Reset Progress
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+        
+        createApp({
+            setup() {
+                // Reactive data
+                const progressPercentage = ref(75);
+                const selectedColor = ref('#3b82f6'); // Default blue color
+                
+                // Color options
+                const colorOptions = [
+                    { name: 'Blue', value: '#3b82f6' },
+                    { name: 'Green', value: '#10b981' },
+                    { name: 'Red', value: '#ef4444' },
+                    { name: 'Purple', value: '#8b5cf6' },
+                    { name: 'Yellow', value: '#f59e0b' }
+                ];
+                
+                // Computed properties for circular progress
+                const radius = 45;
+                const circumference = computed(() => 2 * Math.PI * radius);
+                const strokeDashOffset = computed(() => {
+                    return circumference.value - (progressPercentage.value / 100) * circumference.value;
+                });
+                
+                // Methods
+                const resetProgress = () => {
+                    progressPercentage.value = 0;
+                };
+                
+                return {
+                    progressPercentage,
+                    selectedColor,
+                    colorOptions,
+                    circumference,
+                    strokeDashOffset,
+                    resetProgress
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

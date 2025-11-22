@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Progress Bar - Vue & Tailwind</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        
+        /* Custom styles for circular progress */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        /* Custom styles for linear progress bar */
+        .linear-progress {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        /* Custom slider styling */
+        .slider {
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+    <div id="app" class="w-full max-w-2xl">
+        <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2 text-center">Custom Progress Bars</h1>
+            <p class="text-gray-600 text-center mb-8">With rounded ends and smooth animations</p>
+            
+            <!-- Circular Progress Bar -->
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Circular Progress</h2>
+                <div class="flex justify-center mb-6">
+                    <div class="relative">
+                        <svg class="w-48 h-48" viewBox="0 0 100 100">
+                            <!-- Background circle -->
+                            <circle 
+                                cx="50" 
+                                cy="50" 
+                                r="45" 
+                                stroke="#e5e7eb" 
+                                stroke-width="8" 
+                                fill="transparent" 
+                            />
+                            <!-- Progress circle with rounded ends -->
+                            <circle 
+                                class="progress-ring__circle"
+                                cx="50" 
+                                cy="50" 
+                                r="45" 
+                                :stroke="selectedColor"
+                                stroke-width="8" 
+                                fill="transparent" 
+                                stroke-linecap="round"
+                                :stroke-dasharray="circumference"
+                                :stroke-dashoffset="strokeDashOffset"
+                            />
+                        </svg>
+                        <!-- Percentage text -->
+                        <div class="absolute inset-0 flex items-center justify-center flex-col">
+                            <span class="text-3xl font-bold" :style="{ color: selectedColor }">
+                                {{ progressPercentage }}%
+                            </span>
+                            <span class="text-sm text-gray-500 mt-1">Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linear Progress Bar -->
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Linear Progress</h2>
+                <div class="bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
+                    <div 
+                        class="h-full rounded-full linear-progress" 
+                        :style="{ 
+                            width: `${progressPercentage}%`, 
+                            backgroundColor: selectedColor 
+                        }"
+                    ></div>
+                </div>
+                <div class="flex justify-between text-gray-600 text-sm">
+                    <span>0%</span>
+                    <span>{{ progressPercentage }}%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+            
+            <!-- Progress Slider -->
+            <div class="mb-8">
+                <label class="block text-gray-700 mb-3 font-medium text-lg">Adjust Progress</label>
+                <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    v-model="progressPercentage"
+                    class="w-full slider mb-2"
+                >
+                <div class="flex justify-between text-gray-600 mt-1 text-sm">
+                    <span>0%</span>
+                    <span class="font-medium">{{ progressPercentage }}%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+            
+            <!-- Color Options -->
+            <div class="mb-8">
+                <label class="block text-gray-700 mb-3 font-medium text-lg">Progress Color</label>
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <div 
+                        v-for="color in colorOptions" 
+                        :key="color.name"
+                        class="w-12 h-12 rounded-full cursor-pointer border-2 transition-all duration-200 flex items-center justify-center shadow-md"
+                        :class="[selectedColor === color.value ? 'border-gray-800 scale-110' : 'border-gray-300']"
+                        :style="{ backgroundColor: color.value }"
+                        @click="selectedColor = color.value"
+                        :title="color.name"
+                    >
+                        <i v-if="selectedColor === color.value" class="fas fa-check text-white text-sm"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Control Buttons -->
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button 
+                    @click="resetProgress"
+                    class="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium flex items-center gap-2"
+                >
+                    <i class="fas fa-redo"></i>
+                    Reset Progress
+                </button>
+                <button 
+                    @click="incrementProgress"
+                    class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors duration-200 font-medium flex items-center gap-2"
+                >
+                    <i class="fas fa-plus"></i>
+                    Add 10%
+                </button>
+                <button 
+                    @click="decrementProgress"
+                    class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors duration-200 font-medium flex items-center gap-2"
+                >
+                    <i class="fas fa-minus"></i>
+                    Subtract 10%
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+        
+        createApp({
+            setup() {
+                // Reactive data
+                const progressPercentage = ref(75);
+                const selectedColor = ref('#3b82f6'); // Default blue color
+                
+                // Color options
+                const colorOptions = [
+                    { name: 'Blue', value: '#3b82f6' },
+                    { name: 'Green', value: '#10b981' },
+                    { name: 'Red', value: '#ef4444' },
+                    { name: 'Purple', value: '#8b5cf6' },
+                    { name: 'Yellow', value: '#f59e0b' },
+                    { name: 'Pink', value: '#ec4899' },
+                    { name: 'Indigo', value: '#6366f1' },
+                    { name: 'Teal', value: '#14b8a6' }
+                ];
+                
+                // Computed properties for circular progress
+                const radius = 45;
+                const circumference = computed(() => 2 * Math.PI * radius);
+                const strokeDashOffset = computed(() => {
+                    return circumference.value - (progressPercentage.value / 100) * circumference.value;
+                });
+                
+                // Methods
+                const resetProgress = () => {
+                    progressPercentage.value = 0;
+                };
+                
+                const incrementProgress = () => {
+                    if (progressPercentage.value < 100) {
+                        progressPercentage.value = Math.min(100, progressPercentage.value + 10);
+                    }
+                };
+                
+                const decrementProgress = () => {
+                    if (progressPercentage.value > 0) {
+                        progressPercentage.value = Math.max(0, progressPercentage.value - 10);
+                    }
+                };
+                
+                return {
+                    progressPercentage,
+                    selectedColor,
+                    colorOptions,
+                    circumference,
+                    strokeDashOffset,
+                    resetProgress,
+                    incrementProgress,
+                    decrementProgress
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
