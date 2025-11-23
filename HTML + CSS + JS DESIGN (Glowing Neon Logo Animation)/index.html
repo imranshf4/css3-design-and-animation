@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neon Apple Animation</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        margin: 0;
+        background: #20004a;
+        font-family: Poppins, sans-serif;
+        color: white;
+        text-align: center;
+      }
+
+      header {
+        padding: 25px 0;
+        background: #3d0087;
+      }
+
+      header h1 {
+        font-size: 55px;
+        color: #16ff3d;
+        font-weight: 900;
+        text-shadow: 0 0 20px #00ff44;
+      }
+
+      .logo-section {
+        padding: 40px 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      .glow-circle {
+        width: 280px;
+        height: 280px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: glow 3s infinite alternate;
+      }
+
+      .apple-logo {
+        width: 120px;
+        filter: drop-shadow(0 0 20px #0f0);
+      }
+
+      @keyframes glow {
+        0% {
+          box-shadow: 0 0 30px #00ff44;
+        }
+        100% {
+          box-shadow: 0 0 80px #00ff44;
+        }
+      }
+
+      .code-section {
+        display: flex;
+        justify-content: space-around;
+        padding: 40px;
+        background: #4d018c;
+      }
+
+      .code-block {
+        background: #1a1a1a;
+        padding: 20px;
+        width: 28%;
+        border-radius: 10px;
+        box-shadow: 0 0 15px #00ff44;
+      }
+
+      .code-block h2 {
+        color: #ffde59;
+      }
+
+      pre {
+        text-align: left;
+        font-size: 14px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Comment code</h1>
+    </header>
+
+    <section class="logo-section">
+      <div class="glow-circle">
+        <img src="apple-logo.png" class="apple-logo" />
+      </div>
+    </section>
+
+    <section class="code-section">
+      <div class="code-block">
+        <h2>HTML</h2>
+        <pre>
+&lt;div class="glow-circle"&gt;
+    &lt;img src="apple-logo.png"&gt;
+&lt;/div&gt;
+            </pre
+        >
+      </div>
+
+      <div class="code-block">
+        <h2>CSS</h2>
+        <pre>
+.glow-circle {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(#00ff44, #000);
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { box-shadow: 0 0 20px #00ff44; }
+    100% { box-shadow: 0 0 50px #00ff44; }
+}
+            </pre
+        >
+      </div>
+
+      <div class="code-block">
+        <h2>JS</h2>
+        <pre>
+document.querySelector('.glow-circle')
+.addEventListener('click', () => {
+    alert("Neon Apple Effect Activated!");
+});
+            </pre
+        >
+      </div>
+    </section>
+
+    <script>
+      document
+        .querySelector(".glow-circle")
+        .addEventListener("mouseenter", () => {
+          document.querySelector(".glow-circle").style.transform = "scale(1.1)";
+        });
+
+      document
+        .querySelector(".glow-circle")
+        .addEventListener("mouseleave", () => {
+          document.querySelector(".glow-circle").style.transform = "scale(1)";
+        });
+    </script>
+  </body>
+</html>
