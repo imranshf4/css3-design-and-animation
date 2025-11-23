@@ -3,109 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vue Navigation Menu</title>
+  <title>Tailwind CSS Navigation</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
     
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    :root {
-      --clr: #222327;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: var(--clr);
-    }
-
-    .navigation {
-      position: relative;
-      width: 400px;
-      height: 70px;
-      background: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 10px;
-    }
-
-    .navigation ul {
-      display: flex;
-      width: 350px;
-    }
-
-    .navigation ul li {
-      position: relative;
-      list-style: none;
-      width: 70px;
-      height: 70px;
-      z-index: 1;
-    }
-
-    .navigation ul li a {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      width: 100%;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .navigation ul li a .icon {
-      position: relative;
-      display: block;
-      line-height: 75px;
-      font-size: 1.5em;
-      text-align: center;
-      transition: 0.5s;
-      color: var(--clr);
-    }
-
-    .navigation ul li.active a .icon {
-      transform: translateY(-35px);
-    }
-
-    .navigation ul li a .text {
-      position: absolute;
-      color: var(--clr);
-      font-weight: 400;
-      font-size: 0.75em;
-      letter-spacing: 0.05em;
-      transition: 0.5s;
-      opacity: 0;
-      transform: translateY(20px);
-    }
-
-    .navigation ul li.active a .text {
-      opacity: 1;
-      transform: translateY(10px);
-    }
-
-    .indicator {
-      position: absolute;
-      top: -50%;
-      width: 70px;
-      height: 70px;
-      background: #29fd53;
-      border-radius: 50%;
-      border: 6px solid var(--clr);
-      transition: 0.5s;
-    }
-
+    /* Custom styles for the indicator pseudo-elements */
     .indicator::before {
       content: '';
       position: absolute;
@@ -115,9 +21,9 @@
       height: 20px;
       background: transparent;
       border-top-right-radius: 20px;
-      box-shadow: 1px -5px 0 0 var(--clr);
+      box-shadow: 1px -5px 0 0 #222327;
     }
-
+    
     .indicator::after {
       content: '';
       position: absolute;
@@ -127,54 +33,57 @@
       height: 20px;
       background: transparent;
       border-top-left-radius: 20px;
-      box-shadow: -1px -5px 0 0 var(--clr);
-    }
-
-    .navigation ul li:nth-child(1).active ~ .indicator {
-      transform: translateX(calc(70px * 0));
-    }
-
-    .navigation ul li:nth-child(2).active ~ .indicator {
-      transform: translateX(calc(70px * 1));
-    }
-
-    .navigation ul li:nth-child(3).active ~ .indicator {
-      transform: translateX(calc(70px * 2));
-    }
-
-    .navigation ul li:nth-child(4).active ~ .indicator {
-      transform: translateX(calc(70px * 3));
-    }
-
-    .navigation ul li:nth-child(5).active ~ .indicator {
-      transform: translateX(calc(70px * 4));
+      box-shadow: -1px -5px 0 0 #222327;
     }
   </style>
 </head>
-<body>
-  <div id="app">
+<body class="bg-[#222327] min-h-screen flex flex-col justify-center items-center font-['Poppins']">
+  <div id="app" class="w-full flex flex-col items-center">
     <!-- Navigation Component -->
-    <div class="navigation">
-      <ul>
+    <div class="relative w-[400px] h-[70px] bg-white rounded-[10px] flex justify-center items-center">
+      <ul class="flex w-[350px]">
         <li 
           v-for="(item, index) in menuItems" 
           :key="index"
-          :class="['list', { active: item.active }]"
+          class="relative w-[70px] h-[70px] z-10 list-none"
         >
-          <a href="#" @click.prevent="setActive(index)">
-            <span class="icon">
+          <a 
+            href="#" 
+            class="relative flex justify-center items-center flex-col w-full text-center font-medium"
+            @click.prevent="setActive(index)"
+          >
+            <span 
+              class="relative block leading-[75px] text-[1.5em] text-center text-[#222327] transition-all duration-500"
+              :class="{'transform -translate-y-9': item.active}"
+            >
               <ion-icon :name="item.icon"></ion-icon>
             </span>
-            <span class="text">{{ item.text }}</span>
+            <span 
+              class="absolute text-[#222327] font-normal text-[0.75em] tracking-[0.05em] transition-all duration-500 opacity-0 transform translate-y-5"
+              :class="{'opacity-100 translate-y-[10px]': item.active}"
+            >
+              {{ item.text }}
+            </span>
           </a>
         </li>
-        <div class="indicator"></div>
+        
+        <!-- Indicator -->
+        <div 
+          class="indicator absolute top-[-50%] w-[70px] h-[70px] bg-[#29fd53] rounded-full border-[6px] border-[#222327] transition-all duration-500"
+          :style="{ transform: `translateX(${activeIndex * 70}px)` }"
+        ></div>
       </ul>
+    </div>
+    
+    <!-- Content Area -->
+    <div class="mt-12 text-white text-center">
+      <h1 class="text-2xl font-bold mb-4">{{ activeItem.text }} Page</h1>
+      <p class="text-gray-300">This is the content for the {{ activeItem.text.toLowerCase() }} section.</p>
     </div>
   </div>
 
   <script>
-    const { createApp, ref } = Vue;
+    const { createApp, ref, computed } = Vue;
     
     createApp({
       setup() {
@@ -186,14 +95,26 @@
           { icon: 'settings-outline', text: 'Settings', active: false }
         ]);
         
+        const activeIndex = ref(2); // Home is initially active
+        
+        const activeItem = computed(() => {
+          return menuItems.value[activeIndex.value];
+        });
+        
         function setActive(index) {
           menuItems.value.forEach((item, i) => {
             item.active = i === index;
           });
+          activeIndex.value = index;
         }
+        
+        // Initialize active state
+        setActive(activeIndex.value);
         
         return {
           menuItems,
+          activeIndex,
+          activeItem,
           setActive
         };
       }
