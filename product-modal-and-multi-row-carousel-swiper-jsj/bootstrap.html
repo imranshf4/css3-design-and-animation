@@ -625,11 +625,6 @@
               }
             },
           },
-          on: {
-            init: adjustSwiperHeight,
-            slideChange: adjustSwiperHeight,
-            resize: adjustSwiperHeight
-          }
         });
       }
 
@@ -670,32 +665,6 @@
           }
         });
         
-        // Adjust height on window resize
-        window.addEventListener('resize', adjustSwiperHeight);
-      }
-
-      // Adjust Swiper height based on visible slides
-      function adjustSwiperHeight() {
-        const swiperEl = document.querySelector("#productSwiper");
-        const slides = document.querySelectorAll(".swiper-slide-active, .swiper-slide-next");
-        
-        let maxHeight = 0;
-        
-        slides.forEach((slide) => {
-          const card = slide.querySelector(".product-card");
-          if (card) {
-            // Force reflow to get actual height
-            const height = card.offsetHeight;
-            maxHeight = Math.max(maxHeight, height);
-          }
-        });
-        
-        // Only adjust if we have valid heights
-        if (maxHeight > 0) {
-          // For 2 rows, multiply by 2 and add some space
-          const totalHeight = (maxHeight * 2) + 40; // 40px for spacing
-          swiperEl.style.height = totalHeight + "px";
-        }
       }
 
       // Open variant modal for a product
