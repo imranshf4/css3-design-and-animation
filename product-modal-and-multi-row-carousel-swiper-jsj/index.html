@@ -833,31 +833,23 @@
           card.dataset.id = product.id;
 
           card.innerHTML = `
-                    <div class="product-image">
-                        <img src="${product.image}" alt="${product.title}">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">${product.title}</h3>
-                        <p class="product-description">${
-                          product.description
-                        }</p>
-                        <div class="product-price">$${product.basePrice.toFixed(
-                          2
-                        )}</div>
-                        <div class="product-actions">
-                            <button class="btn btn-add-to-cart" data-id="${
-                              product.id
-                            }">
-                                <i class="fas fa-cart-plus"></i> Add to Cart
-                            </button>
-                            <button class="btn btn-buy-now" data-id="${
-                              product.id
-                            }">
-                                <i class="fas fa-bolt"></i> Buy Now
-                            </button>
-                        </div>
-                    </div>
-                `;
+      <div class="product-image swiper-slide">
+        <img src="${product.image}" alt="${product.title}">
+      </div>
+      <div class="product-info">
+        <h3 class="product-title">${product.title}</h3>
+        <p class="product-description">${product.description}</p>
+        <div class="product-price">$${product.basePrice.toFixed(2)}</div>
+        <div class="product-actions">
+          <button class="btn btn-add-to-cart" data-id="${product.id}">
+            <i class="fas fa-cart-plus"></i> Add to Cart
+          </button>
+          <button class="btn btn-buy-now" data-id="${product.id}">
+            <i class="fas fa-bolt"></i> Buy Now
+          </button>
+        </div>
+      </div>
+    `;
 
           slide.appendChild(card);
           productSwiperEl.appendChild(slide);
@@ -867,30 +859,51 @@
       // Initialize Swiper
       function initSwiper() {
         swiper = new Swiper(".swiper", {
-          slidesPerView: 1,
-          spaceBetween: 10,
+          // Enable grid mode
           grid: {
             rows: 2,
+            fill: "row",
           },
+          slidesPerView: 1,
+          spaceBetween: 20,
           loop: true,
-          //   autoplay: true,
           navigation: {
             nextEl: ".swiper-button-next",
             prevEl: ".swiper-button-prev",
           },
+          // Optional: Add pagination
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+          // Responsive breakpoints
           breakpoints: {
             640: {
               slidesPerView: 2,
+              spaceBetween: 20,
+              grid: {
+                rows: 2,
+                fill: "row",
+              },
+            },
+            768: {
+              slidesPerView: 3,
+              spaceBetween: 20,
+              grid: {
+                rows: 2,
+                fill: "row",
+              },
             },
             1024: {
               slidesPerView: 4,
+              spaceBetween: 20,
+              grid: {
+                rows: 2,
+                fill: "row",
+              },
             },
           },
         });
-
-        // run on load + slide change
-        swiper.on("slideChange", adjustSwiperHeight);
-        window.addEventListener("load", adjustSwiperHeight);
       }
 
       // Setup event listeners
@@ -1181,24 +1194,6 @@
         setTimeout(() => {
           notification.classList.remove("show");
         }, 3000);
-      }
-
-      function adjustSwiperHeight() {
-        const swiperEl = document.querySelector(".swiper");
-        const activeSlides = document.querySelectorAll(
-          ".swiper-slide-active, .swiper-slide-next"
-        );
-
-        let maxHeight = 0;
-
-        activeSlides.forEach((slide) => {
-          const card = slide.querySelector(".product-card");
-          if (card) {
-            maxHeight = Math.max(maxHeight, card.offsetHeight);
-          }
-        });
-
-        swiperEl.style.height = maxHeight * 2 + 40 + "px";
       }
 
       // Initialize the app when DOM is loaded
