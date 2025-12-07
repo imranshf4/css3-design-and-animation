@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Swiper with Variant Selection</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .cart-icon {
+        position: relative;
+        background: #3498db;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .cart-icon:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #e74c3c;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+
+      .product-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .product-image {
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .product-card:hover .product-image img {
+        transform: scale(1.05);
+      }
+
+      .product-info {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .product-title {
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .product-description {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        flex-grow: 1;
+      }
+
+      .product-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2ecc71;
+        margin-bottom: 15px;
+      }
+
+      /* Modal Custom Styles */
+      .variant-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .variant-option {
+        padding: 10px 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .variant-option:hover {
+        border-color: #3498db;
+        background: #f8f9fa;
+      }
+
+      .variant-option.selected {
+        border-color: #3498db;
+        background: #3498db;
+        color: white;
+      }
+
+      .variant-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2ecc71;
+        margin: 20px 0;
+      }
+
+      /* Cart Panel */
+      .cart-panel {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 350px;
+        height: 100vh;
+        background: white;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        z-index: 1050;
+        transition: right 0.4s ease;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .cart-panel.active {
+        right: 0;
+      }
+
+      .cart-item-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .cart-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .cart-item-variant {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+
+      .cart-item-price {
+        font-weight: bold;
+        color: #2ecc71;
+      }
+
+      .notification {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: #2ecc71;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1060;
+        transition: transform 0.4s ease;
+        font-weight: 500;
+      }
+
+      .notification.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .swiper-button-next,
+      .swiper-button-prev {
+        color: #3498db;
+        background: rgba(255, 255, 255, 0.8);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .swiper-button-next:after,
+      .swiper-button-prev:after {
+        font-size: 1.5rem;
+      }
+
+      /* Swiper container height adjustment */
+      #productSwiper {
+        height: auto !important;
+        min-height: 500px;
+      }
+
+      @media (max-width: 768px) {
+        .cart-panel {
+          width: 100%;
+          right: -100%;
+        }
+        
+        .product-card {
+          height: 420px;
+        }
+        
+        #productSwiper {
+          min-height: 450px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid py-4">
+      <header class="text-center mb-5">
+        <h1 class="display-4 text-dark mb-3">Product Showcase</h1>
+        <p class="lead text-muted">
+          Swipe through products, select variants, and add to cart
+        </p>
+      </header>
+
+      <div class="d-flex justify-content-end mb-4">
+        <div class="cart-icon d-flex align-items-center gap-2" id="cartIcon">
+          <i class="fas fa-shopping-cart"></i>
+          <span>View Cart</span>
+          <div class="cart-count" id="cartCount">0</div>
+        </div>
+      </div>
+
+      <!-- Swiper Container -->
+      <div class="swiper mb-5" id="productSwiper">
+        <div class="swiper-wrapper" id="productSwiperWrapper">
+          <!-- Product cards will be generated by JavaScript -->
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+
+      <!-- Variant Selection Modal -->
+      <div class="modal fade" id="variantModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalProductTitle">Select Variant</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div id="variantSections">
+                <!-- Variant options will be added here -->
+              </div>
+              <div class="variant-price" id="modalPrice">$0.00</div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" id="addToCartFromModal">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+              <button class="btn btn-success" id="buyNowFromModal">
+                <i class="fas fa-bolt"></i> Buy Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Panel -->
+      <div class="cart-panel" id="cartPanel">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+          <h3 class="mb-0 text-dark">Your Cart</h3>
+          <button class="btn-close" id="closeCart"></button>
+        </div>
+
+        <div class="flex-grow-1 overflow-auto p-3" id="cartItems" style="max-height: calc(100vh - 200px);">
+          <!-- Cart items will be added here -->
+          <div class="text-center py-5 text-muted" id="emptyCart">
+            <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+            <p class="mb-0">Your cart is empty</p>
+          </div>
+        </div>
+
+        <div class="border-top p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Total:</h5>
+            <h4 class="mb-0 text-success" id="cartTotal">$0.00</h4>
+          </div>
+          <button class="btn btn-success w-100 py-3">Proceed to Checkout</button>
+        </div>
+      </div>
+
+      <!-- Notification -->
+      <div class="notification" id="notification">Item added to cart!</div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+      // Product data
+      const products = [
+        {
+          id: 1,
+          title: "Wireless Bluetooth Headphones",
+          description: "Premium noise-cancelling headphones with 30hr battery life and crystal clear audio.",
+          basePrice: 129.99,
+          image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Color: [
+              { name: "Black", priceModifier: 0 },
+              { name: "White", priceModifier: 10 },
+              { name: "Blue", priceModifier: 5 },
+              { name: "Red", priceModifier: 5 },
+            ],
+            "Connection Type": [
+              { name: "Bluetooth 5.0", priceModifier: 0 },
+              { name: "Bluetooth 5.2", priceModifier: 15 },
+              { name: "Wired + Bluetooth", priceModifier: 20 },
+            ],
+          },
+        },
+        {
+          id: 2,
+          title: "Smart Fitness Watch",
+          description: "Track your workouts, heart rate, sleep, and receive smartphone notifications.",
+          basePrice: 199.99,
+          image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Size: [
+              { name: "Small (38mm)", priceModifier: 0 },
+              { name: "Medium (42mm)", priceModifier: 10 },
+              { name: "Large (46mm)", priceModifier: 20 },
+            ],
+            Band: [
+              { name: "Silicone", priceModifier: 0 },
+              { name: "Leather", priceModifier: 25 },
+              { name: "Metal", priceModifier: 40 },
+            ],
+          },
+        },
+        {
+          id: 3,
+          title: "Professional Camera",
+          description: "24MP DSLR camera with 18-55mm lens, perfect for photography enthusiasts.",
+          basePrice: 599.99,
+          image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            "Lens Kit": [
+              { name: "18-55mm", priceModifier: 0 },
+              { name: "18-135mm", priceModifier: 150 },
+              { name: "24-70mm", priceModifier: 300 },
+            ],
+            Color: [
+              { name: "Black", priceModifier: 0 },
+              { name: "Silver", priceModifier: 50 },
+            ],
+          },
+        },
+        {
+          id: 4,
+          title: "Gaming Laptop",
+          description: "High-performance laptop with RTX 4070, 32GB RAM, and 1TB SSD for gaming and creative work.",
+          basePrice: 1499.99,
+          image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            "Graphics Card": [
+              { name: "RTX 4060", priceModifier: -200 },
+              { name: "RTX 4070", priceModifier: 0 },
+              { name: "RTX 4080", priceModifier: 400 },
+            ],
+            RAM: [
+              { name: "16GB", priceModifier: -100 },
+              { name: "32GB", priceModifier: 0 },
+              { name: "64GB", priceModifier: 300 },
+            ],
+          },
+        },
+        {
+          id: 5,
+          title: "Smartphone Pro",
+          description: "Flagship smartphone with advanced camera system, 5G connectivity, and all-day battery.",
+          basePrice: 999.99,
+          image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Storage: [
+              { name: "128GB", priceModifier: 0 },
+              { name: "256GB", priceModifier: 100 },
+              { name: "512GB", priceModifier: 250 },
+            ],
+            Color: [
+              { name: "Space Gray", priceModifier: 0 },
+              { name: "Silver", priceModifier: 0 },
+              { name: "Gold", priceModifier: 20 },
+              { name: "Deep Purple", priceModifier: 20 },
+            ],
+          },
+        },
+        {
+          id: 6,
+          title: "Wireless Earbuds",
+          description: "True wireless earbuds with noise cancellation and 24hr battery with charging case.",
+          basePrice: 159.99,
+          image: "https://images.unsplash.com/photo-1590658165737-15a047b8b5e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Color: [
+              { name: "White", priceModifier: 0 },
+              { name: "Black", priceModifier: 0 },
+              { name: "Blue", priceModifier: 5 },
+              { name: "Green", priceModifier: 5 },
+            ],
+          },
+        },
+        {
+          id: 7,
+          title: "Ultra HD TV",
+          description: "65-inch 4K Smart TV with HDR, streaming apps, and immersive sound technology.",
+          basePrice: 799.99,
+          image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Size: [
+              { name: "55-inch", priceModifier: -150 },
+              { name: "65-inch", priceModifier: 0 },
+              { name: "75-inch", priceModifier: 400 },
+            ],
+            Features: [
+              { name: "Basic Smart TV", priceModifier: 0 },
+              { name: "Gaming Edition", priceModifier: 100 },
+              { name: "Cinema Edition", priceModifier: 200 },
+            ],
+          },
+        },
+        {
+          id: 8,
+          title: "Coffee Maker",
+          description: "Programmable coffee maker with grinder, thermal carafe, and strength control.",
+          basePrice: 129.99,
+          image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Capacity: [
+              { name: "8 Cups", priceModifier: -20 },
+              { name: "12 Cups", priceModifier: 0 },
+              { name: "14 Cups", priceModifier: 30 },
+            ],
+            Color: [
+              { name: "Black", priceModifier: 0 },
+              { name: "Stainless Steel", priceModifier: 30 },
+              { name: "Red", priceModifier: 10 },
+            ],
+          },
+        },
+        {
+          id: 9,
+          title: "Running Shoes",
+          description: "Lightweight running shoes with cushioning technology for maximum comfort.",
+          basePrice: 119.99,
+          image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Size: [
+              { name: "US 7", priceModifier: 0 },
+              { name: "US 8", priceModifier: 0 },
+              { name: "US 9", priceModifier: 0 },
+              { name: "US 10", priceModifier: 0 },
+              { name: "US 11", priceModifier: 0 },
+            ],
+            Color: [
+              { name: "Black/White", priceModifier: 0 },
+              { name: "Blue/Orange", priceModifier: 0 },
+              { name: "Red/Black", priceModifier: 5 },
+            ],
+          },
+        },
+        {
+          id: 10,
+          title: "Backpack",
+          description: "Water-resistant backpack with laptop compartment, multiple pockets, and ergonomic design.",
+          basePrice: 79.99,
+          image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+          variants: {
+            Size: [
+              { name: "20L", priceModifier: -10 },
+              { name: "30L", priceModifier: 0 },
+              { name: "40L", priceModifier: 15 },
+            ],
+            Color: [
+              { name: "Black", priceModifier: 0 },
+              { name: "Gray", priceModifier: 0 },
+              { name: "Blue", priceModifier: 0 },
+              { name: "Green", priceModifier: 5 },
+            ],
+          },
+        },
+      ];
+
+      // Cart state
+      let cart = [];
+      let currentProduct = null;
+      let selectedVariants = {};
+
+      // DOM elements
+      const productSwiperWrapper = document.getElementById("productSwiperWrapper");
+      const cartIcon = document.getElementById("cartIcon");
+      const cartCount = document.getElementById("cartCount");
+      const cartPanel = document.getElementById("cartPanel");
+      const closeCart = document.getElementById("closeCart");
+      const cartItems = document.getElementById("cartItems");
+      const cartTotal = document.getElementById("cartTotal");
+      const emptyCart = document.getElementById("emptyCart");
+      const variantModal = new bootstrap.Modal(document.getElementById('variantModal'));
+      const modalProductTitle = document.getElementById("modalProductTitle");
+      const variantSections = document.getElementById("variantSections");
+      const modalPrice = document.getElementById("modalPrice");
+      const addToCartFromModal = document.getElementById("addToCartFromModal");
+      const buyNowFromModal = document.getElementById("buyNowFromModal");
+      const notification = document.getElementById("notification");
+
+      // Initialize Swiper
+      let swiper;
+
+      // Initialize the application
+      function init() {
+        renderProductCards();
+        initSwiper();
+        setupEventListeners();
+        updateCartDisplay();
+      }
+
+      // Render product cards
+      function renderProductCards() {
+        products.forEach((product) => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.dataset.id = product.id;
+
+          card.innerHTML = `
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.title}" class="w-100">
+            </div>
+            <div class="product-info">
+                <h3 class="product-title">${product.title}</h3>
+                <p class="product-description">${product.description}</p>
+                <div class="product-price">$${product.basePrice.toFixed(2)}</div>
+                <div class="d-flex gap-2 mt-auto">
+                    <button class="btn btn-primary flex-grow-1 btn-add-to-cart" data-id="${product.id}">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                    <button class="btn btn-success flex-grow-1 btn-buy-now" data-id="${product.id}">
+                        <i class="fas fa-bolt"></i> Buy Now
+                    </button>
+                </div>
+            </div>
+          `;
+
+          slide.appendChild(card);
+          productSwiperWrapper.appendChild(slide);
+        });
+      }
+
+      // Initialize Swiper
+      function initSwiper() {
+        swiper = new Swiper("#productSwiper", {
+          slidesPerView: 1,
+          spaceBetween: 20,
+          grid: {
+            rows: 2,
+            fill: 'row'
+          },
+          loop: true,
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+          breakpoints: {
+            640: {
+              slidesPerView: 2,
+              grid: {
+                rows: 2
+              }
+            },
+            768: {
+              slidesPerView: 3,
+              grid: {
+                rows: 2
+              }
+            },
+            1024: {
+              slidesPerView: 4,
+              grid: {
+                rows: 2
+              }
+            },
+          },
+          on: {
+            init: adjustSwiperHeight,
+            slideChange: adjustSwiperHeight,
+            resize: adjustSwiperHeight
+          }
+        });
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        // Cart icon click
+        cartIcon.addEventListener("click", () => {
+          cartPanel.classList.add("active");
+        });
+
+        // Close cart panel
+        closeCart.addEventListener("click", () => {
+          cartPanel.classList.remove("active");
+        });
+
+        // Add to cart from modal
+        addToCartFromModal.addEventListener("click", addToCart);
+
+        // Buy now from modal
+        buyNowFromModal.addEventListener("click", () => {
+          addToCart();
+          showNotification("Item purchased successfully!");
+          variantModal.hide();
+        });
+
+        // Delegate events for product cards (since they're dynamically created)
+        document.addEventListener("click", (e) => {
+          // Add to cart button
+          if (e.target.closest(".btn-add-to-cart")) {
+            const productId = parseInt(e.target.closest(".btn-add-to-cart").dataset.id);
+            openVariantModal(productId);
+          }
+
+          // Buy now button
+          if (e.target.closest(".btn-buy-now")) {
+            const productId = parseInt(e.target.closest(".btn-buy-now").dataset.id);
+            openVariantModal(productId, true);
+          }
+        });
+        
+        // Adjust height on window resize
+        window.addEventListener('resize', adjustSwiperHeight);
+      }
+
+      // Adjust Swiper height based on visible slides
+      function adjustSwiperHeight() {
+        const swiperEl = document.querySelector("#productSwiper");
+        const slides = document.querySelectorAll(".swiper-slide-active, .swiper-slide-next");
+        
+        let maxHeight = 0;
+        
+        slides.forEach((slide) => {
+          const card = slide.querySelector(".product-card");
+          if (card) {
+            // Force reflow to get actual height
+            const height = card.offsetHeight;
+            maxHeight = Math.max(maxHeight, height);
+          }
+        });
+        
+        // Only adjust if we have valid heights
+        if (maxHeight > 0) {
+          // For 2 rows, multiply by 2 and add some space
+          const totalHeight = (maxHeight * 2) + 40; // 40px for spacing
+          swiperEl.style.height = totalHeight + "px";
+        }
+      }
+
+      // Open variant modal for a product
+      function openVariantModal(productId, isBuyNow = false) {
+        currentProduct = products.find((p) => p.id === productId);
+
+        if (!currentProduct) return;
+
+        // Reset selected variants
+        selectedVariants = {};
+
+        // Set modal title
+        modalProductTitle.textContent = currentProduct.title;
+
+        // Clear variant sections
+        variantSections.innerHTML = "";
+
+        // Create variant sections
+        Object.keys(currentProduct.variants).forEach((variantType) => {
+          const section = document.createElement("div");
+          section.className = "mb-4";
+
+          const title = document.createElement("h6");
+          title.className = "mb-2 fw-bold";
+          title.textContent = variantType;
+          section.appendChild(title);
+
+          const optionsContainer = document.createElement("div");
+          optionsContainer.className = "variant-options";
+
+          currentProduct.variants[variantType].forEach((option, index) => {
+            const optionEl = document.createElement("div");
+            optionEl.className = "variant-option";
+            optionEl.textContent = option.name;
+            optionEl.dataset.variantType = variantType;
+            optionEl.dataset.optionIndex = index;
+
+            // Select first option by default
+            if (index === 0) {
+              optionEl.classList.add("selected");
+              selectedVariants[variantType] = option;
+            }
+
+            optionEl.addEventListener("click", () => {
+              // Remove selected class from all options in this variant type
+              optionsContainer.querySelectorAll(".variant-option").forEach((opt) => {
+                opt.classList.remove("selected");
+              });
+
+              // Add selected class to clicked option
+              optionEl.classList.add("selected");
+
+              // Update selected variant
+              selectedVariants[variantType] = option;
+
+              // Update price
+              updateModalPrice();
+            });
+
+            optionsContainer.appendChild(optionEl);
+          });
+
+          section.appendChild(optionsContainer);
+          variantSections.appendChild(section);
+        });
+
+        // Update price
+        updateModalPrice();
+
+        // Store if this is for buy now
+        addToCartFromModal.dataset.buyNow = isBuyNow;
+
+        // Show modal
+        variantModal.show();
+      }
+
+      // Update modal price based on selected variants
+      function updateModalPrice() {
+        if (!currentProduct) return;
+
+        let totalPrice = currentProduct.basePrice;
+
+        // Add price modifiers from selected variants
+        Object.values(selectedVariants).forEach((variant) => {
+          totalPrice += variant.priceModifier;
+        });
+
+        modalPrice.textContent = `$${totalPrice.toFixed(2)}`;
+      }
+
+      // Add to cart function
+      function addToCart() {
+        if (!currentProduct) return;
+
+        // Calculate final price
+        let finalPrice = currentProduct.basePrice;
+        let variantDescription = "";
+
+        Object.keys(selectedVariants).forEach((variantType) => {
+          const variant = selectedVariants[variantType];
+          finalPrice += variant.priceModifier;
+          variantDescription += `${variantType}: ${variant.name}, `;
+        });
+
+        // Remove trailing comma and space
+        variantDescription = variantDescription.slice(0, -2);
+
+        // Create cart item
+        const cartItem = {
+          id: currentProduct.id,
+          title: currentProduct.title,
+          image: currentProduct.image,
+          variant: variantDescription,
+          price: finalPrice,
+          quantity: 1,
+        };
+
+        // Check if item already exists in cart
+        const existingItemIndex = cart.findIndex(
+          (item) => item.id === cartItem.id && item.variant === cartItem.variant
+        );
+
+        if (existingItemIndex >= 0) {
+          // Update quantity if item exists
+          cart[existingItemIndex].quantity += 1;
+        } else {
+          // Add new item to cart
+          cart.push(cartItem);
+        }
+
+        // Update cart display
+        updateCartDisplay();
+
+        // Show notification
+        showNotification("Item added to cart!");
+
+        // Check if this was a buy now action
+        const isBuyNow = addToCartFromModal.dataset.buyNow === "true";
+
+        if (!isBuyNow) {
+          // Close modal after adding to cart
+          setTimeout(() => {
+            variantModal.hide();
+          }, 300);
+        }
+      }
+
+      // Update cart display
+      function updateCartDisplay() {
+        // Update cart count
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = totalItems;
+
+        // Update cart items
+        cartItems.innerHTML = "";
+
+        if (cart.length === 0) {
+          emptyCart.style.display = "block";
+          cartItems.appendChild(emptyCart);
+        } else {
+          emptyCart.style.display = "none";
+
+          let totalPrice = 0;
+
+          cart.forEach((item, index) => {
+            totalPrice += item.price * item.quantity;
+
+            const cartItemEl = document.createElement("div");
+            cartItemEl.className = "cart-item d-flex gap-3 mb-3 pb-3 border-bottom";
+            cartItemEl.innerHTML = `
+              <div class="cart-item-image flex-shrink-0">
+                <img src="${item.image}" alt="${item.title}" class="rounded">
+              </div>
+              <div class="cart-item-details flex-grow-1">
+                <div class="fw-bold">${item.title}</div>
+                <div class="cart-item-variant text-muted small">${item.variant}</div>
+                <div class="cart-item-price text-success fw-bold">$${(item.price * item.quantity).toFixed(2)}</div>
+                <div class="d-flex align-items-center gap-2 mt-2">
+                  <button class="btn btn-sm btn-outline-secondary quantity-btn" data-index="${index}" data-action="decrease">-</button>
+                  <span class="fw-bold">${item.quantity}</span>
+                  <button class="btn btn-sm btn-outline-secondary quantity-btn" data-index="${index}" data-action="increase">+</button>
+                  <button class="btn btn-sm btn-danger ms-auto remove-btn" data-index="${index}">Remove</button>
+                </div>
+              </div>
+            `;
+
+            cartItems.appendChild(cartItemEl);
+          });
+
+          // Update total price
+          cartTotal.textContent = `$${totalPrice.toFixed(2)}`;
+
+          // Add event listeners to quantity buttons
+          document.querySelectorAll(".quantity-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const index = parseInt(e.target.dataset.index);
+              const action = e.target.dataset.action;
+
+              if (action === "increase") {
+                cart[index].quantity += 1;
+              } else if (action === "decrease") {
+                if (cart[index].quantity > 1) {
+                  cart[index].quantity -= 1;
+                } else {
+                  cart.splice(index, 1);
+                }
+              }
+
+              updateCartDisplay();
+            });
+          });
+
+          // Add event listeners to remove buttons
+          document.querySelectorAll(".remove-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const index = parseInt(e.target.dataset.index);
+              cart.splice(index, 1);
+              updateCartDisplay();
+              showNotification("Item removed from cart!");
+            });
+          });
+        }
+      }
+
+      // Show notification
+      function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      // Initialize the app when DOM is loaded
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
+  </body>
+</html>
